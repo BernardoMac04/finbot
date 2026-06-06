@@ -1,3 +1,4 @@
+import html
 import os
 import sys
 from datetime import datetime
@@ -539,6 +540,7 @@ with tab_signals:
                     f'<div style="margin:4px 0;font-family:monospace;color:#00D4AA;font-size:0.85rem;">{val}</div>'
                     if val is not None else ""
                 )
+                reason_safe = html.escape(data.get("reason", ""))
                 st.markdown(f"""
                 <div class="signal-card">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
@@ -546,7 +548,7 @@ with tab_signals:
                         {badge}
                     </div>
                     {val_html}
-                    <p style="color:#888;font-size:0.77rem;margin:0;">{data.get("reason","")}</p>
+                    <p style="color:#888;font-size:0.77rem;margin:0;">{reason_safe}</p>
                 </div>
                 """, unsafe_allow_html=True)
                 if ind in INDICATOR_INFO:
