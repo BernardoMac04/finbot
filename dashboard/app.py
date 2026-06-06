@@ -537,7 +537,7 @@ with tab_signals:
             label = ind.upper().replace("_", " ")
             with cols[i % 3]:
                 val_html = (
-                    f'<div style="margin:4px 0;font-family:monospace;color:#00D4AA;font-size:0.85rem;">{val}</div>'
+                    f'<div style="margin:4px 0;font-family:monospace;color:#00D4AA;font-size:0.85rem;">{html.escape(str(val))}</div>'
                     if val is not None else ""
                 )
                 reason_safe = html.escape(data.get("reason", ""))
