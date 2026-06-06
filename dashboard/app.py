@@ -193,7 +193,7 @@ def _load_data(ticker: str, period: str, interval: str) -> tuple:
     return df, quote, signals
 
 
-def _build_chart(df, ticker: str, show_bb: bool, show_sma: bool, show_ema: bool):
+def _build_chart(df, ticker: str, show_bb: bool, show_sma: bool):
     fig = make_subplots(
         rows=4, cols=1,
         shared_xaxes=True,
@@ -245,7 +245,7 @@ def _build_chart(df, ticker: str, show_bb: bool, show_sma: bool, show_ema: bool)
                 )
 
     # EMAs + crossover annotations
-    if show_ema:
+    if True:
         for span, color in [(9, "#f48fb1"), (21, "#80deea")]:
             col_n = f"ema_{span}"
             if col_n in df.columns:
@@ -379,7 +379,6 @@ with st.sidebar:
     st.markdown("**Indicadores no gráfico**")
     show_bb  = st.checkbox("Bollinger Bands",                value=True)
     show_sma = st.checkbox("Médias Simples (SMA 20/50/200)", value=True)
-    show_ema = st.checkbox("Médias Exponenciais (EMA 9/21)", value=False)
 
     st.divider()
     analyze_btn = st.button("🔍 Analisar",        type="primary",   use_container_width=True)
@@ -572,7 +571,7 @@ st.divider()
 
 # ── Chart ─────────────────────────────────────────────────────────────────────
 
-fig = _build_chart(df, ticker, show_bb, show_sma, show_ema)
+fig = _build_chart(df, ticker, show_bb, show_sma)
 st.plotly_chart(fig, use_container_width=True)
 
 st.divider()
