@@ -179,7 +179,7 @@ def _build_chart(df, ticker: str, show_bb: bool, show_sma: bool, show_ema: bool)
     fig = make_subplots(
         rows=4, cols=1,
         shared_xaxes=True,
-        vertical_spacing=0.03,
+        vertical_spacing=0.08,
         row_heights=[0.50, 0.14, 0.18, 0.18],
         subplot_titles=[f"{ticker} — Candlestick", "Volume", "RSI (14)", "MACD"],
     )
