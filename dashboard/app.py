@@ -106,15 +106,23 @@ INDICATOR_INFO = {
 
 # ── UI helpers ────────────────────────────────────────────────────────────────
 
+def _safe(v, default=None):
+    try:
+        return float(v) if v is not None else default
+    except (TypeError, ValueError):
+        return default
+
+
 def _metric_card(label: str, value: str, delta: str = "", delta_up: bool | None = None) -> str:
+    d = str(delta).strip() if (delta is not None and str(delta).strip()) else ""
     if delta_up is True:
-        delta_html = f'<p class="metric-delta-up">↑ {delta}</p>'
+        delta_html = f'<p class="metric-delta-up">↑ {d}</p>' if d else '<p class="metric-delta-up">↑</p>'
         border = "#00c853"
     elif delta_up is False:
-        delta_html = f'<p class="metric-delta-dn">↓ {delta}</p>'
+        delta_html = f'<p class="metric-delta-dn">↓ {d}</p>' if d else '<p class="metric-delta-dn">↓</p>'
         border = "#ff1744"
     else:
-        delta_html = f'<p class="metric-delta-neu">{delta}</p>' if delta else ""
+        delta_html = f'<p class="metric-delta-neu">{d}</p>' if d else ""
         border = "#00D4AA"
     return (
         f'<div class="metric-card" style="border-left-color:{border}">'
@@ -383,6 +391,18 @@ with st.sidebar:
     if st.session_state.last_update:
         st.caption(f"Última atualização: {st.session_state.last_update}")
 
+    st.divider()
+    st.markdown("**📊 FinBot Pro**")
+    st.caption("Alertas automáticos, relatórios diários e API em breve.")
+    st.link_button(
+        "🔔 Entrar na lista de espera",
+        "mailto:finbot@email.com",
+        use_container_width=True,
+    )
+
+    st.divider()
+    st.caption(f"FinBot v{APP_VERSION}")
+
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -435,14 +455,62 @@ if refresh_btn and st.session_state.loaded_ticker:
 # ── Empty state ───────────────────────────────────────────────────────────────
 
 if st.session_state.df is None:
-    st.info("👈 Selecione um favorito ou digite o ticker na barra lateral e clique em **Analisar**.")
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.markdown("**📊 Gráficos interativos**\n\nCandlestick com Bollinger Bands, SMA e EMA. RSI e MACD em painéis separados.")
-    with c2:
-        st.markdown("**🤖 Análise com IA**\n\nAnálise completa em português via Groq (`llama-3.3-70b-versatile`).")
-    with c3:
-        st.markdown("**💬 Chat interativo**\n\nPerguntas sobre o ativo com histórico de conversa mantido pela IA.")
+    st.markdown(
+        '<div style="text-align:center;padding:60px 20px 32px 20px;">'
+        '<div style="font-size:4rem;margin-bottom:12px;">📈</div>'
+        '<h1 style="font-size:2.6rem;font-weight:800;'
+        'background:linear-gradient(90deg,#00D4AA,#0099CC);'
+        '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+        'margin:0 0 10px 0;">FinBot</h1>'
+        '<p style="color:#888;font-size:1.05rem;margin:0 0 8px 0;">'
+        'Análise técnica e IA para ações brasileiras</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+
+    lc1, lc2, lc3 = st.columns(3)
+    with lc1:
+        st.markdown(
+            '<div class="metric-card">'
+            '<p style="font-size:1.6rem;margin:0 0 8px 0;">🤖</p>'
+            '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">IA em Português</p>'
+            '<p style="color:#888;font-size:0.85rem;margin:0;">Relatórios gerados por IA com linguagem clara e objetiva.</p>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+    with lc2:
+        st.markdown(
+            '<div class="metric-card">'
+            '<p style="font-size:1.6rem;margin:0 0 8px 0;">📊</p>'
+            '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">6 Indicadores</p>'
+            '<p style="color:#888;font-size:0.85rem;margin:0;">RSI, MACD, Bollinger Bands, SMA, EMA e ATR.</p>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+    with lc3:
+        st.markdown(
+            '<div class="metric-card">'
+            '<p style="font-size:1.6rem;margin:0 0 8px 0;">⚡</p>'
+            '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">Tempo Real</p>'
+            '<p style="color:#888;font-size:0.85rem;margin:0;">Dados atualizados do mercado via yfinance e Brapi.</p>'
+            '</div>',
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(
+        '<p style="text-align:center;color:#aaa;margin:28px 0 4px 0;font-size:0.95rem;">'
+        '👈 Digite um ticker na barra lateral e clique em <strong>Analisar</strong></p>',
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("**Tickers populares**")
+    land_cols = st.columns(len(FAVORITES))
+    for i, t in enumerate(FAVORITES):
+        with land_cols[i]:
+            if st.button(t, key=f"land_{t}", use_container_width=True):
+                st.session_state.ticker_input = t
+                st.rerun()
+
     st.stop()
 
 df      = st.session_state.df
@@ -452,11 +520,11 @@ ticker  = st.session_state.loaded_ticker
 
 # ── Metrics row ───────────────────────────────────────────────────────────────
 
-price      = quote.get("price")      or 0.0
-change     = quote.get("change")     or 0.0
-change_pct = quote.get("change_pct") or 0.0
-rsi_raw    = signals.get("rsi", {}).get("value", None)
-atr_pct    = signals.get("volatilidade", {}).get("value", "—")
+price_f      = _safe(quote.get("price"), 0.0)
+change_f     = _safe(quote.get("change"))
+change_pct_f = _safe(quote.get("change_pct"))
+rsi_raw      = signals.get("rsi", {}).get("value", None)
+atr_pct      = signals.get("volatilidade", {}).get("value", "—")
 
 all_sigs  = [v.get("signal") for v in signals.values() if "signal" in v]
 bull      = all_sigs.count("alta")
@@ -465,25 +533,28 @@ total_sig = len(all_sigs)
 sentiment = "ALTA" if bull > bear else ("BAIXA" if bear > bull else "NEUTRO")
 
 try:
-    rsi_f     = float(rsi_raw)
-    rsi_str   = f"{rsi_f:.1f}"
-    rsi_zone  = "Sobrecomprado" if rsi_f >= 70 else ("Sobrevendido" if rsi_f <= 30 else "Neutro")
+    rsi_f    = float(rsi_raw)
+    rsi_str  = f"{rsi_f:.1f}"
+    rsi_zone = "Sobrecomprado" if rsi_f >= 70 else ("Sobrevendido" if rsi_f <= 30 else "Neutro")
 except (TypeError, ValueError):
     rsi_f, rsi_str, rsi_zone = None, "—", ""
 
 c1, c2, c3, c4, c5 = st.columns(5)
-pct_up = float(change_pct) > 0
-pct_dn = float(change_pct) < 0
 with c1:
-    st.markdown(_metric_card("Preço Atual", f"R$ {float(price):.2f}",
-                              f"{float(change_pct):+.2f}%",
-                              True if pct_up else (False if pct_dn else None)),
+    if change_pct_f is not None:
+        pct_str = f"{change_pct_f:+.2f}%"
+        pct_dir = True if change_pct_f > 0 else (False if change_pct_f < 0 else None)
+    else:
+        pct_str, pct_dir = "—", None
+    st.markdown(_metric_card("Preço Atual", f"R$ {price_f:.2f}", pct_str, pct_dir),
                 unsafe_allow_html=True)
 with c2:
-    chg_up = float(change) > 0
-    chg_dn = float(change) < 0
-    st.markdown(_metric_card("Variação R$", f"R$ {float(change):+.2f}",
-                              None, True if chg_up else (False if chg_dn else None)),
+    if change_f is not None:
+        chg_str = f"R$ {change_f:+.2f}"
+        chg_dir = True if change_f > 0 else (False if change_f < 0 else None)
+    else:
+        chg_str, chg_dir = "—", None
+    st.markdown(_metric_card("Variação R$", chg_str, delta="", delta_up=chg_dir),
                 unsafe_allow_html=True)
 with c3:
     st.markdown(_metric_card("RSI (14)", rsi_str, rsi_zone), unsafe_allow_html=True)
