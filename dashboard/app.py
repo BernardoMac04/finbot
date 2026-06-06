@@ -529,10 +529,6 @@ with tab_signals:
 
         st.divider()
 
-        # DEBUG — remover após confirmar os valores em produção
-        with st.expander("🔍 DEBUG: signals dict"):
-            st.write(signals)
-
         cols = st.columns(3)
         for i, (ind, data) in enumerate(signals.items()):
             sig   = data.get("signal", "neutro")
