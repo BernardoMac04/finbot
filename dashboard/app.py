@@ -529,6 +529,10 @@ with tab_signals:
 
         st.divider()
 
+        # DEBUG — remover após confirmar os valores em produção
+        with st.expander("🔍 DEBUG: signals dict"):
+            st.write(signals)
+
         cols = st.columns(3)
         for i, (ind, data) in enumerate(signals.items()):
             sig   = data.get("signal", "neutro")
@@ -541,16 +545,16 @@ with tab_signals:
                     if val is not None else ""
                 )
                 reason_safe = html.escape(data.get("reason", ""))
-                st.markdown(f"""
-                <div class="signal-card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                        <strong style="font-size:0.84rem;">{label}</strong>
-                        {badge}
-                    </div>
-                    {val_html}
-                    <p style="color:#888;font-size:0.77rem;margin:0;">{reason_safe}</p>
-                </div>
-                """, unsafe_allow_html=True)
+                card_html = (
+                    '<div class="signal-card">'
+                    f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">'
+                    f'<strong style="font-size:0.84rem;">{label}</strong>{badge}'
+                    f'</div>'
+                    f'{val_html}'
+                    f'<p style="color:#888;font-size:0.77rem;margin:0;">{reason_safe}</p>'
+                    '</div>'
+                )
+                st.markdown(card_html, unsafe_allow_html=True)
                 if ind in INDICATOR_INFO:
                     with st.expander("ℹ️ O que é isso?"):
                         st.caption(INDICATOR_INFO[ind])
