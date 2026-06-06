@@ -93,6 +93,15 @@ SIGNAL_BADGE = {
     "neutro": '<span class="badge-neutro">NEUTRO</span>',
 }
 
+INDICATOR_INFO = {
+    "rsi":            "Índice de Força Relativa (0-100). Acima de 70 = sobrecomprado, abaixo de 30 = sobrevendido.",
+    "macd":           "Convergência/Divergência de Médias. Quando MACD cruza acima da linha de sinal = tendência de alta.",
+    "bollinger":      "Bandas de volatilidade. Preço próximo à banda inferior = possível suporte. Banda superior = resistência.",
+    "medias_moveis":  "SMA20 e SMA50 mostram a tendência. Preço acima das médias = tendência de alta.",
+    "ema_cruzamento": "EMA9 e EMA21. Quando EMA9 cruza acima da EMA21 = sinal de alta (golden cross).",
+    "volatilidade":   "Average True Range. Mede a volatilidade do ativo. Quanto maior, mais volátil.",
+}
+
 
 # ── UI helpers ────────────────────────────────────────────────────────────────
 
@@ -540,6 +549,9 @@ with tab_signals:
                     <p style="color:#888;font-size:0.77rem;margin:0;">{data.get("reason","")}</p>
                 </div>
                 """, unsafe_allow_html=True)
+                if ind in INDICATOR_INFO:
+                    with st.expander("ℹ️ O que é isso?"):
+                        st.caption(INDICATOR_INFO[ind])
 
 with tab_ai:
     api_key_present = bool(os.getenv("GROQ_API_KEY"))
