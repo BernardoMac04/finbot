@@ -337,7 +337,13 @@ with st.sidebar:
     fav_cols = st.columns(3)
     for i, t in enumerate(FAVORITES):
         with fav_cols[i % 3]:
-            if st.button(t, key=f"fav_{t}", use_container_width=True):
+            is_active = st.session_state.get("ticker_input", "") == t
+            if st.button(
+                t,
+                key=f"fav_{t}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
                 st.session_state.ticker_input = t
                 st.rerun()
 
