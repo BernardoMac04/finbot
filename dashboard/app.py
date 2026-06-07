@@ -509,6 +509,11 @@ if refresh_btn and st.session_state.loaded_ticker:
 # ── Empty state ───────────────────────────────────────────────────────────────
 
 if st.session_state.df is None:
+    # DEBUG temporário — remover após confirmar o fluxo
+    with st.expander("🔍 DEBUG session_state"):
+        st.write({k: v for k, v in st.session_state.items() if k not in ("df", "chat", "messages")})
+    st.caption(f"ticker_input var = `{ticker_input}` | in TICKER_INFO = `{ticker_input in TICKER_INFO}`")
+
     # ── Company preview card (ticker selecionado mas ainda não analisado) ──────
     if ticker_input and ticker_input in TICKER_INFO:
         info = TICKER_INFO[ticker_input]
@@ -628,9 +633,12 @@ with c2:
     if change_f is not None:
         chg_str = f"R$ {change_f:+.2f}"
         chg_dir = True if change_f > 0 else (False if change_f < 0 else None)
+        chg_delta = f"{change_f:+.2f}"
+        if change_pct_f is not None:
+            chg_delta += f" ({change_pct_f:+.2f}%)"
     else:
-        chg_str, chg_dir = "—", None
-    st.markdown(_metric_card("Variação R$", chg_str, delta="", delta_up=chg_dir),
+        chg_str, chg_dir, chg_delta = "—", None, ""
+    st.markdown(_metric_card("Variação R$", chg_str, delta=chg_delta, delta_up=chg_dir),
                 unsafe_allow_html=True)
 with c3:
     st.markdown(_metric_card("RSI (14)", rsi_str, rsi_zone), unsafe_allow_html=True)
