@@ -334,6 +334,9 @@ def _build_chart(df, ticker: str, show_bb: bool, show_sma: bool):
 
 # ── Session state defaults ────────────────────────────────────────────────────
 
+if "ticker_input" not in st.session_state:
+    st.session_state.ticker_input = "PETR4"
+
 for key, default in [
     ("df", None), ("quote", None), ("signals", None),
     ("analysis", None), ("chat", None), ("messages", []),
