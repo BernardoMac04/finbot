@@ -381,8 +381,13 @@ for key, default in [
 
 # Transfere seleção de ticker feita por botões (evita conflito com widget-owned key)
 if st.session_state.ticker_selected:
-    st.session_state.ticker_input = st.session_state.ticker_selected
+    new_t = st.session_state.ticker_selected
+    st.session_state.ticker_input = new_t
     st.session_state.ticker_selected = None
+    # Se o ticker mudou, limpa os dados para evitar desync header/gráfico
+    if st.session_state.loaded_ticker and st.session_state.loaded_ticker != new_t:
+        st.session_state.df            = None
+        st.session_state.loaded_ticker = None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -436,14 +441,7 @@ with st.sidebar:
     show_sma = st.checkbox("Médias Simples (SMA 20/50/200)", value=True)
 
     st.divider()
-    analyze_btn = st.button("🔍 Analisar",        type="primary",   use_container_width=True)
-    refresh_btn = st.button("🔄 Atualizar Dados", type="secondary", use_container_width=True,
-                            disabled=(st.session_state.loaded_ticker is None))
-
-    if st.session_state.loaded_ticker:
-        st.caption(f"Ativo: **{st.session_state.loaded_ticker}**")
-    if st.session_state.last_update:
-        st.caption(f"Última atualização: {st.session_state.last_update}")
+    analyze_btn = st.button("🔍 Analisar", type="primary", use_container_width=True)
 
     st.divider()
     st.markdown("**📊 FinBot Pro**")
@@ -501,10 +499,6 @@ def _do_load(ticker: str, period: str, interval: str) -> None:
 
 if analyze_btn:
     _do_load(ticker_input, period, interval)
-
-if refresh_btn and st.session_state.loaded_ticker:
-    _do_load(st.session_state.loaded_ticker, period, interval)
-    st.rerun()
 
 # ── Empty state ───────────────────────────────────────────────────────────────
 
