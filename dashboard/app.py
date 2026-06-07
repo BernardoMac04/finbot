@@ -103,6 +103,39 @@ INDICATOR_INFO = {
     "volatilidade":   "Average True Range. Mede a volatilidade do ativo. Quanto maior, mais volátil.",
 }
 
+TICKER_INFO = {
+    "PETR4": {
+        "nome": "Petrobras",
+        "setor": "Energia",
+        "icon": "🛢️",
+        "desc": "Maior produtora de petróleo do Brasil e uma das maiores do mundo.",
+    },
+    "VALE3": {
+        "nome": "Vale",
+        "setor": "Mineração",
+        "icon": "⛏️",
+        "desc": "Maior produtora de minério de ferro e níquel do planeta.",
+    },
+    "ITUB4": {
+        "nome": "Itaú Unibanco",
+        "setor": "Financeiro",
+        "icon": "🏦",
+        "desc": "Maior banco privado da América Latina por ativos.",
+    },
+    "BBDC4": {
+        "nome": "Bradesco",
+        "setor": "Financeiro",
+        "icon": "🏦",
+        "desc": "Um dos maiores bancos do Brasil com forte presença no varejo.",
+    },
+    "WEGE3": {
+        "nome": "WEG",
+        "setor": "Indústria",
+        "icon": "⚙️",
+        "desc": "Líder global em motores elétricos e automação industrial.",
+    },
+}
+
 
 # ── UI helpers ────────────────────────────────────────────────────────────────
 
@@ -372,6 +405,20 @@ with st.sidebar:
             ):
                 st.session_state.ticker_selected = t
                 st.rerun()
+
+    _active_ticker = st.session_state.get("ticker_input", "")
+    if _active_ticker in TICKER_INFO:
+        _info = TICKER_INFO[_active_ticker]
+        st.markdown(
+            f'<div style="background:#1A1D24;border-radius:8px;padding:10px 12px;'
+            f'margin:8px 0 0 0;border:1px solid #2A2D34;">'
+            f'<p style="margin:0 0 2px 0;font-size:1rem;">{_info["icon"]} <strong>{_info["nome"]}</strong></p>'
+            f'<p style="margin:0 0 4px 0;font-size:0.72rem;color:#00D4AA;text-transform:uppercase;'
+            f'letter-spacing:0.05em;">{_info["setor"]}</p>'
+            f'<p style="margin:0;font-size:0.78rem;color:#aaa;">{_info["desc"]}</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
 
     st.divider()
 
