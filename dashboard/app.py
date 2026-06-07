@@ -503,25 +503,34 @@ if analyze_btn:
 # ── Empty state ───────────────────────────────────────────────────────────────
 
 if st.session_state.df is None:
-    # DEBUG temporário — remover após confirmar o fluxo
-    with st.expander("🔍 DEBUG session_state"):
-        st.write({k: v for k, v in st.session_state.items() if k not in ("df", "chat", "messages")})
-    st.caption(f"ticker_input var = `{ticker_input}` | in TICKER_INFO = `{ticker_input in TICKER_INFO}`")
+    # ── Cabeçalho comum às duas telas ─────────────────────────────────────────
+    st.markdown(
+        '<div style="text-align:center;padding:52px 20px 28px 20px;">'
+        '<div style="font-size:4rem;margin-bottom:12px;">📈</div>'
+        '<h1 style="font-size:2.6rem;font-weight:800;'
+        'background:linear-gradient(90deg,#00D4AA,#0099CC);'
+        '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
+        'margin:0 0 10px 0;">FinBot</h1>'
+        '<p style="color:#888;font-size:1.05rem;margin:0;">'
+        'Análise técnica e IA para ações brasileiras</p>'
+        '</div>',
+        unsafe_allow_html=True,
+    )
 
-    # ── Company preview card (ticker selecionado mas ainda não analisado) ──────
+    # ── Card discreto da empresa quando ticker favorito está selecionado ──────
     if ticker_input and ticker_input in TICKER_INFO:
         info = TICKER_INFO[ticker_input]
         st.markdown(
-            f'<div style="text-align:center;padding:48px 20px 28px 20px;">'
-            f'<div style="font-size:3.6rem;margin-bottom:14px;">{info["icon"]}</div>'
-            f'<h1 style="font-size:2.2rem;font-weight:800;margin:0 0 6px 0;">{info["nome"]}</h1>'
-            f'<p style="color:#00D4AA;font-size:0.8rem;text-transform:uppercase;'
-            f'letter-spacing:0.09em;margin:0 0 14px 0;">Setor: {info["setor"]}</p>'
-            f'<p style="color:#aaa;font-size:0.98rem;max-width:480px;'
-            f'margin:0 auto 36px auto;">{info["desc"]}</p>'
-            f'</div>',
+            f'<div style="background:#1A1D24;border:1px solid #2A2D34;border-radius:10px;'
+            f'padding:14px 20px;margin:18px auto 0 auto;max-width:560px;text-align:center;">'
+            f'<p style="margin:0;font-size:0.95rem;color:#FAFAFA;">'
+            f'{info["icon"]} <strong>{info["nome"]}</strong>'
+            f' &nbsp;·&nbsp; <span style="color:#00D4AA;">{info["setor"]}</span>'
+            f' &nbsp;·&nbsp; <span style="color:#aaa;font-size:0.88rem;">{info["desc"]}</span>'
+            f'</p></div>',
             unsafe_allow_html=True,
         )
+        st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
         _, btn_col, _ = st.columns([2, 3, 2])
         with btn_col:
             if st.button(f"📊 Analisar {ticker_input}", type="primary", use_container_width=True):
@@ -529,20 +538,8 @@ if st.session_state.df is None:
                 st.rerun()
         st.stop()
 
-    # ── Landing page (nenhum ticker selecionado ainda) ─────────────────────────
-    st.markdown(
-        '<div style="text-align:center;padding:60px 20px 32px 20px;">'
-        '<div style="font-size:4rem;margin-bottom:12px;">📈</div>'
-        '<h1 style="font-size:2.6rem;font-weight:800;'
-        'background:linear-gradient(90deg,#00D4AA,#0099CC);'
-        '-webkit-background-clip:text;-webkit-text-fill-color:transparent;'
-        'margin:0 0 10px 0;">FinBot</h1>'
-        '<p style="color:#888;font-size:1.05rem;margin:0 0 8px 0;">'
-        'Análise técnica e IA para ações brasileiras</p>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
-
+    # ── Landing page completa (nenhum ticker selecionado) ─────────────────────
+    st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
     lc1, lc2, lc3 = st.columns(3)
     with lc1:
         st.markdown(
