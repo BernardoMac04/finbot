@@ -123,9 +123,10 @@ class StockChat:
 
     def chat(self, message: str) -> str:
         self._history.append({"role": "user", "content": message})
+        history = self._history[-6:] if len(self._history) > 6 else self._history
         response = _get_client().chat.completions.create(
             model=MODEL_NAME,
-            messages=[{"role": "system", "content": SYSTEM_PROMPT}] + self._history,
+            messages=[{"role": "system", "content": SYSTEM_PROMPT}] + history,
         )
         reply = response.choices[0].message.content
         self._history.append({"role": "assistant", "content": reply})
