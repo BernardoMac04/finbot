@@ -341,10 +341,15 @@ for key, default in [
     ("df", None), ("quote", None), ("signals", None),
     ("analysis", None), ("chat", None), ("messages", []),
     ("loaded_ticker", None), ("last_update", None),
-    ("ticker_input", "PETR4"),
+    ("ticker_input", "PETR4"), ("ticker_selected", None),
 ]:
     if key not in st.session_state:
         st.session_state[key] = default
+
+# Transfere seleção de ticker feita por botões (evita conflito com widget-owned key)
+if st.session_state.ticker_selected:
+    st.session_state.ticker_input = st.session_state.ticker_selected
+    st.session_state.ticker_selected = None
 
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
@@ -365,7 +370,7 @@ with st.sidebar:
                 use_container_width=True,
                 type="primary" if is_active else "secondary",
             ):
-                st.session_state.ticker_input = t
+                st.session_state.ticker_selected = t
                 st.rerun()
 
     st.divider()
@@ -510,7 +515,7 @@ if st.session_state.df is None:
     for i, t in enumerate(FAVORITES):
         with land_cols[i]:
             if st.button(t, key=f"land_{t}", use_container_width=True):
-                st.session_state.ticker_input = t
+                st.session_state.ticker_selected = t
                 st.rerun()
 
     st.stop()
