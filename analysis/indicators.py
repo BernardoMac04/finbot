@@ -102,11 +102,11 @@ def get_signals(df: pd.DataFrame) -> dict:
     rsi = last.get("rsi")
     if pd.notna(rsi):
         if rsi < 30:
-            sig, reason = "alta", "Sobrevendido (RSI < 30)"
+            sig, reason = "alta", "Momento favorável de compra"
         elif rsi > 70:
-            sig, reason = "baixa", "Sobrecomprado (RSI > 70)"
+            sig, reason = "baixa", "Ação pode estar cara agora"
         else:
-            sig, reason = "neutro", f"RSI neutro em {rsi:.1f}"
+            sig, reason = "neutro", "Sem sinal claro no momento"
         signals["rsi"] = {"value": round(float(rsi), 2), "signal": sig, "reason": reason}
 
     # MACD
@@ -117,26 +117,22 @@ def get_signals(df: pd.DataFrame) -> dict:
         growing = pd.notna(prev_hist) and macd_hist > prev_hist
         shrinking = pd.notna(prev_hist) and macd_hist < prev_hist
         if macd_hist > 0 and growing:
-            sig, reason = "alta", "Histograma MACD positivo e crescendo"
+            sig, reason = "alta", "Tendência positiva se formando"
         elif macd_hist < 0 and shrinking:
-            sig, reason = "baixa", "Histograma MACD negativo e caindo"
-        elif macd_hist > 0:
-            sig, reason = "neutro", "MACD positivo mas perdendo força"
-        elif macd_hist < 0:
-            sig, reason = "neutro", "MACD negativo mas reduzindo"
+            sig, reason = "baixa", "Tendência negativa se formando"
         else:
-            sig, reason = "neutro", "MACD sem direção definida"
+            sig, reason = "neutro", "Mercado sem direção definida"
         signals["macd"] = {"value": round(float(macd_val), 4), "signal": sig, "reason": reason}
 
     # Bollinger Bands
     bb_pct = last.get("bb_pct")
     if pd.notna(bb_pct):
         if bb_pct < 0.2:
-            sig, reason = "alta", "Preço próximo à banda inferior (possível suporte)"
+            sig, reason = "alta", "Preço próximo a zona de suporte"
         elif bb_pct > 0.8:
-            sig, reason = "baixa", "Preço próximo à banda superior (possível resistência)"
+            sig, reason = "baixa", "Preço próximo a zona de resistência"
         else:
-            sig, reason = "neutro", f"Preço dentro das bandas ({bb_pct:.0%})"
+            sig, reason = "neutro", "Sem sinal claro no momento"
         signals["bollinger"] = {"value": round(float(bb_pct), 4), "signal": sig, "reason": reason}
 
     # Moving averages trend
@@ -145,13 +141,11 @@ def get_signals(df: pd.DataFrame) -> dict:
     sma_50 = last.get("sma_50")
     if pd.notna(close_val) and pd.notna(sma_20) and pd.notna(sma_50):
         if close_val > sma_20 > sma_50:
-            sig, reason = "alta", "Preço > SMA20 > SMA50 — tendência de alta"
+            sig, reason = "alta", "Ação em tendência de alta"
         elif close_val < sma_20 < sma_50:
-            sig, reason = "baixa", "Preço < SMA20 < SMA50 — tendência de baixa"
-        elif close_val > sma_20:
-            sig, reason = "neutro", "Preço acima da SMA20 mas médias sem alinhamento"
+            sig, reason = "baixa", "Ação em tendência de baixa"
         else:
-            sig, reason = "neutro", "Médias sem alinhamento claro"
+            sig, reason = "neutro", "Ação andando de lado"
         signals["medias_moveis"] = {"signal": sig, "reason": reason}
 
     # EMA crossover (9 x 21)
@@ -163,13 +157,13 @@ def get_signals(df: pd.DataFrame) -> dict:
         golden = ema_9 > ema_21 and prev_ema_9 <= prev_ema_21
         death = ema_9 < ema_21 and prev_ema_9 >= prev_ema_21
         if golden:
-            sig, reason = "alta", "Golden Cross EMA9/EMA21 recente"
+            sig, reason = "alta", "Tendência positiva se formando"
         elif death:
-            sig, reason = "baixa", "Death Cross EMA9/EMA21 recente"
+            sig, reason = "baixa", "Tendência negativa se formando"
         elif ema_9 > ema_21:
-            sig, reason = "alta", "EMA9 acima da EMA21"
+            sig, reason = "alta", "Ação em tendência de alta"
         else:
-            sig, reason = "baixa", "EMA9 abaixo da EMA21"
+            sig, reason = "baixa", "Ação em tendência de baixa"
         signals["ema_cruzamento"] = {"signal": sig, "reason": reason}
 
     # Volatility (ATR%)

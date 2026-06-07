@@ -417,7 +417,7 @@ with st.sidebar:
         st.markdown(
             f'<div style="background:#1A1D24;border-radius:8px;padding:10px 12px;'
             f'margin:8px 0 0 0;border:1px solid #2A2D34;">'
-            f'<p style="margin:0 0 2px 0;font-size:1rem;">{_info["icon"]} <strong>{_info["nome"]}</strong></p>'
+            f'<p style="margin:0 0 2px 0;font-size:1rem;"><strong>{_info["nome"]}</strong></p>'
             f'<p style="margin:0 0 4px 0;font-size:0.72rem;color:#00D4AA;text-transform:uppercase;'
             f'letter-spacing:0.05em;">{_info["setor"]}</p>'
             f'<p style="margin:0;font-size:0.78rem;color:#aaa;">{_info["desc"]}</p>'
@@ -441,13 +441,13 @@ with st.sidebar:
     show_sma = st.checkbox("Médias Simples (SMA 20/50/200)", value=True)
 
     st.divider()
-    analyze_btn = st.button("🔍 Analisar", type="primary", use_container_width=True)
+    analyze_btn = st.button("Analisar", type="primary", use_container_width=True)
 
     st.divider()
-    st.markdown("**📊 FinBot Pro**")
+    st.markdown("**FinBot Pro**")
     st.caption("Alertas automáticos, relatórios diários e API em breve.")
     st.link_button(
-        "🔔 Entrar na lista de espera",
+        "Entrar na lista de espera",
         "mailto:finbot@email.com",
         use_container_width=True,
     )
@@ -524,7 +524,7 @@ if st.session_state.df is None:
             f'<div style="background:#1A1D24;border:1px solid #2A2D34;border-radius:10px;'
             f'padding:14px 20px;margin:18px auto 0 auto;max-width:560px;text-align:center;">'
             f'<p style="margin:0;font-size:0.95rem;color:#FAFAFA;">'
-            f'{info["icon"]} <strong>{info["nome"]}</strong>'
+            f'<strong>{info["nome"]}</strong>'
             f' &nbsp;·&nbsp; <span style="color:#00D4AA;">{info["setor"]}</span>'
             f' &nbsp;·&nbsp; <span style="color:#aaa;font-size:0.88rem;">{info["desc"]}</span>'
             f'</p></div>',
@@ -533,18 +533,43 @@ if st.session_state.df is None:
         st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
         _, btn_col, _ = st.columns([2, 3, 2])
         with btn_col:
-            if st.button(f"📊 Analisar {ticker_input}", type="primary", use_container_width=True):
+            if st.button(f"Analisar {ticker_input}", type="primary", use_container_width=True):
                 _do_load(ticker_input, period, interval)
                 st.rerun()
         st.stop()
 
     # ── Landing page completa (nenhum ticker selecionado) ─────────────────────
+    _SVG_AI = (
+        '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" '
+        'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'
+        '<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>'
+        '<line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>'
+        '<line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>'
+        '<line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>'
+        '<line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>'
+        '</svg>'
+    )
+    _SVG_CHART = (
+        '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" '
+        'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'
+        '<line x1="18" y1="20" x2="18" y2="10"/>'
+        '<line x1="12" y1="20" x2="12" y2="4"/>'
+        '<line x1="6" y1="20" x2="6" y2="14"/>'
+        '</svg>'
+    )
+    _SVG_ZAP = (
+        '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00D4AA" '
+        'stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">'
+        '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'
+        '</svg>'
+    )
+
     st.markdown("<div style='height:12px'></div>", unsafe_allow_html=True)
     lc1, lc2, lc3 = st.columns(3)
     with lc1:
         st.markdown(
             '<div class="metric-card">'
-            '<p style="font-size:1.6rem;margin:0 0 8px 0;">🤖</p>'
+            f'<div style="margin:0 0 10px 0;">{_SVG_AI}</div>'
             '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">IA em Português</p>'
             '<p style="color:#888;font-size:0.85rem;margin:0;">Relatórios gerados por IA com linguagem clara e objetiva.</p>'
             '</div>',
@@ -553,7 +578,7 @@ if st.session_state.df is None:
     with lc2:
         st.markdown(
             '<div class="metric-card">'
-            '<p style="font-size:1.6rem;margin:0 0 8px 0;">📊</p>'
+            f'<div style="margin:0 0 10px 0;">{_SVG_CHART}</div>'
             '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">6 Indicadores</p>'
             '<p style="color:#888;font-size:0.85rem;margin:0;">RSI, MACD, Bollinger Bands, SMA, EMA e ATR.</p>'
             '</div>',
@@ -562,7 +587,7 @@ if st.session_state.df is None:
     with lc3:
         st.markdown(
             '<div class="metric-card">'
-            '<p style="font-size:1.6rem;margin:0 0 8px 0;">⚡</p>'
+            f'<div style="margin:0 0 10px 0;">{_SVG_ZAP}</div>'
             '<p style="font-weight:700;font-size:1rem;margin:0 0 6px 0;">Tempo Real</p>'
             '<p style="color:#888;font-size:0.85rem;margin:0;">Dados atualizados do mercado via yfinance e Brapi.</p>'
             '</div>',
@@ -571,7 +596,7 @@ if st.session_state.df is None:
 
     st.markdown(
         '<p style="text-align:center;color:#aaa;margin:28px 0 4px 0;font-size:0.95rem;">'
-        '👈 Digite um ticker na barra lateral e clique em <strong>Analisar</strong></p>',
+        'Digite um ticker na barra lateral e clique em <strong>Analisar</strong></p>',
         unsafe_allow_html=True,
     )
 
@@ -602,7 +627,12 @@ all_sigs  = [v.get("signal") for v in signals.values() if "signal" in v]
 bull      = all_sigs.count("alta")
 bear      = all_sigs.count("baixa")
 total_sig = len(all_sigs)
-sentiment = "ALTA" if bull > bear else ("BAIXA" if bear > bull else "NEUTRO")
+if bull > bear:
+    sent_label, sent_bg, sent_border, sent_color = "MOMENTO FAVORÁVEL",  "#0a2419", "#00c853", "#00c853"
+elif bear > bull:
+    sent_label, sent_bg, sent_border, sent_color = "MOMENTO DE CAUTELA", "#2a0a0a", "#ff1744", "#ff1744"
+else:
+    sent_label, sent_bg, sent_border, sent_color = "AGUARDAR SINAIS",    "#1A1D24", "#555",    "#aaa"
 
 try:
     rsi_f    = float(rsi_raw)
@@ -636,12 +666,15 @@ with c3:
 with c4:
     st.markdown(_metric_card("Volatilidade ATR%", f"{atr_pct}%"), unsafe_allow_html=True)
 with c5:
-    s_up = sentiment == "ALTA"
-    s_dn = sentiment == "BAIXA"
-    st.markdown(_metric_card("Sentimento", sentiment,
-                              f"{bull}↑  {bear}↓  de {total_sig} sinais",
-                              True if s_up else (False if s_dn else None)),
-                unsafe_allow_html=True)
+    sent_html = (
+        f'<div class="metric-card" style="border-left-color:{sent_border};background:{sent_bg};">'
+        f'<p class="metric-label">Sentimento</p>'
+        f'<p class="metric-value" style="font-size:0.92rem;color:{sent_color};">{sent_label}</p>'
+        f'<p class="metric-delta-neu" style="color:{sent_color};opacity:0.7;">'
+        f'{bull} alta &nbsp;·&nbsp; {bear} baixa &nbsp;·&nbsp; {total_sig - bull - bear} neutro</p>'
+        f'</div>'
+    )
+    st.markdown(sent_html, unsafe_allow_html=True)
 
 st.divider()
 
@@ -655,7 +688,7 @@ st.divider()
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 
 tab_signals, tab_ai, tab_chat = st.tabs(
-    ["📊 Sinais Técnicos", "🤖 Análise IA (Groq)", "💬 Chat com IA"]
+    ["Sinais Técnicos", "Análise IA (Groq)", "Chat com IA"]
 )
 
 with tab_signals:
@@ -698,7 +731,7 @@ with tab_signals:
                 )
                 st.markdown(card_html, unsafe_allow_html=True)
                 if ind in INDICATOR_INFO:
-                    with st.expander("ℹ️ O que é isso?"):
+                    with st.expander("O que é isso?"):
                         st.caption(INDICATOR_INFO[ind])
 
 with tab_ai:
@@ -707,7 +740,7 @@ with tab_ai:
         st.warning("Configure `GROQ_API_KEY` no arquivo `.env` para usar a análise IA.")
     else:
         if st.session_state.analysis is None:
-            if st.button("🤖 Gerar análise completa", type="primary"):
+            if st.button("Gerar análise completa", type="primary"):
                 with st.spinner("Groq está analisando..."):
                     try:
                         st.session_state.analysis = analyze(ticker, quote, signals)
@@ -726,7 +759,7 @@ with tab_chat:
         f"Chat sobre **{ticker}** — {st.session_state.chat.message_count} mensagens enviadas. "
         "Use o botão abaixo para resetar."
     )
-    if st.button("🔄 Resetar conversa"):
+    if st.button("Resetar conversa"):
         st.session_state.chat.reset()
         st.session_state.messages = []
         st.rerun()
@@ -753,7 +786,7 @@ with tab_chat:
 
 st.markdown(f"""
 <div class="footer">
-    <p>⚠️ <strong>Disclaimer:</strong> As informações exibidas têm caráter exclusivamente informativo e educacional.
+    <p><strong>Disclaimer:</strong> As informações exibidas têm caráter exclusivamente informativo e educacional.
     Não constituem recomendação de investimento. Consulte um assessor financeiro certificado antes de tomar decisões de investimento.</p>
     <p>FinBot v{APP_VERSION} &nbsp;·&nbsp; Dados via yfinance / Brapi
     &nbsp;·&nbsp; IA via Groq (llama-3.3-70b-versatile)
