@@ -509,6 +509,28 @@ if refresh_btn and st.session_state.loaded_ticker:
 # ── Empty state ───────────────────────────────────────────────────────────────
 
 if st.session_state.df is None:
+    # ── Company preview card (ticker selecionado mas ainda não analisado) ──────
+    if ticker_input and ticker_input in TICKER_INFO:
+        info = TICKER_INFO[ticker_input]
+        st.markdown(
+            f'<div style="text-align:center;padding:48px 20px 28px 20px;">'
+            f'<div style="font-size:3.6rem;margin-bottom:14px;">{info["icon"]}</div>'
+            f'<h1 style="font-size:2.2rem;font-weight:800;margin:0 0 6px 0;">{info["nome"]}</h1>'
+            f'<p style="color:#00D4AA;font-size:0.8rem;text-transform:uppercase;'
+            f'letter-spacing:0.09em;margin:0 0 14px 0;">Setor: {info["setor"]}</p>'
+            f'<p style="color:#aaa;font-size:0.98rem;max-width:480px;'
+            f'margin:0 auto 36px auto;">{info["desc"]}</p>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+        _, btn_col, _ = st.columns([2, 3, 2])
+        with btn_col:
+            if st.button(f"📊 Analisar {ticker_input}", type="primary", use_container_width=True):
+                _do_load(ticker_input, period, interval)
+                st.rerun()
+        st.stop()
+
+    # ── Landing page (nenhum ticker selecionado ainda) ─────────────────────────
     st.markdown(
         '<div style="text-align:center;padding:60px 20px 32px 20px;">'
         '<div style="font-size:4rem;margin-bottom:12px;">📈</div>'
